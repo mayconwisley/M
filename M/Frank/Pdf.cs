@@ -1,4 +1,4 @@
-﻿using PdfSharp.Drawing;
+using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 
@@ -70,7 +70,15 @@ public static class Pdf
         if (!Directory.Exists(outputDirectory))
             throw new DirectoryNotFoundException($"Diretório de saída não encontrado: {outputDirectory}");
 
-        string outputFile = Path.Combine(outputDirectory, "pdfMerge.pdf");
+        string outputFileName = args.Length >= 4 ? args[3] : "pdfMerge.pdf";
+
+        if (string.IsNullOrWhiteSpace(outputFileName))
+            throw new ArgumentException("O nome do arquivo de saída não pode ser vazio.");
+
+        if (!string.Equals(Path.GetExtension(outputFileName), ".pdf", StringComparison.OrdinalIgnoreCase))
+            outputFileName += ".pdf";
+
+        string outputFile = Path.Combine(outputDirectory, outputFileName);
 
         MergePdf(inputDirectory, outputFile);
     }

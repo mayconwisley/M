@@ -1,6 +1,6 @@
 namespace M.Pastaruga;
 
-public sealed class Ninja
+public sealed class ArquivoNinja
 {
     public static void Execute(string[] args)
     {
@@ -17,46 +17,39 @@ public sealed class Ninja
             {
                 case "c":
                     if (args.Length < 4)
-                    {
                         Environment.Exit(2);
-                    }
-                    Pasta.Criar(args[2], args[3]);
+
+                    Arquivo.Criar(args[2], args[3]);
                     break;
 
                 case "m":
                     if (args.Length < 4)
-                    {
                         Environment.Exit(2);
-                    }
-                    Pasta.Mover(args[2], args[3]);
+
+                    Arquivo.Mover(args[2], args[3]);
                     break;
 
                 case "d":
                     if (args.Length < 3)
-                    {
                         Environment.Exit(2);
-                    }
-                    Pasta.Deletar(args[2]);
+
+                    Arquivo.Deletar(args[2]);
                     break;
 
                 case "k":
                     if (args.Length < 4)
-                    {
                         Environment.Exit(2);
-                    }
 
                     if (args[2] == "x")
                     {
                         if (args.Length < 5)
-                        {
                             Environment.Exit(2);
-                        }
 
-                        Arquivo.Copiar(args[3], args[4], true);
+                        Arquivo.CopiarArquivo(args[3], args[4], true);
                         break;
                     }
 
-                    Arquivo.Copiar(args[2], args[3]);
+                    Arquivo.CopiarArquivo(args[2], args[3]);
                     break;
 
                 default:

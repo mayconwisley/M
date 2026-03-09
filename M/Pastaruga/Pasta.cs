@@ -1,4 +1,4 @@
-﻿namespace M.Pastaruga;
+namespace M.Pastaruga;
 
 public class Pasta
 {
@@ -35,6 +35,7 @@ public class Pasta
             throw;
         }
     }
+
     public static bool Mover(string pathOrigin, string pathDestination)
     {
         if (string.IsNullOrEmpty(pathOrigin))
@@ -55,6 +56,29 @@ public class Pasta
             return true;
         }
         catch (UnauthorizedAccessException auEx)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    public static bool Deletar(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return false;
+
+        try
+        {
+            if (!Directory.Exists(path))
+                return false;
+
+            Directory.Delete(path, true);
+            return true;
+        }
+        catch (UnauthorizedAccessException uaEx)
         {
             throw;
         }

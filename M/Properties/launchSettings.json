@@ -2,7 +2,7 @@
   "profiles": {
     "M": {
       "commandName": "Project",
-      "commandLineArgs": "-folder k x C:\\Temp\\FrankPdf C:\\Temp\\FrankPdfOutput"
+      "commandLineArgs": "-merge \"C:\\Temp\\Marilan\\257BDAF9BE768301F90C6D90CA3535B5\" \"C:\\Temp\\Marilan\\257BDAF9BE768301F90C6D90CA3535B5\""
     }
   }
 }

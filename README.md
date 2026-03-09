@@ -41,8 +41,9 @@ dotnet publish -c Release -r win-x64 --self-contained true
 # Estrutura de Comandos
 
     M -timeout <tempo_em_segundos>
-    M -merge <diretorio_entrada> <diretorio_saida>
+    M -merge <diretorio_entrada> <diretorio_saida> [nome_arquivo_saida]
     M -folder <opcao> [parametros]
+    M -file <opcao> [parametros]
 
 ------------------------------------------------------------------------
 
@@ -90,13 +91,14 @@ Arquivos são processados em ordem alfabética.
 ## Sintaxe
 
 ``` bash
-M -merge <diretorio_entrada> <diretorio_saida>
+M -merge <diretorio_entrada> <diretorio_saida> [nome_arquivo_saida]
 ```
 
 ## Exemplo
 
 ``` bash
 M -merge C:\Docs\Entrada C:\Docs\Saida
+M -merge C:\Docs\Entrada C:\Docs\Saida relatorio_final
 ```
 
 Resultado:
@@ -116,12 +118,13 @@ Erros possíveis:
 
 ------------------------------------------------------------------------
 
-# 3. Operações com Pastas (-folder)
+## 3. Operações com Pastas (-folder)
 
 Subcomandos disponíveis:
 
 c → Criar diretório\
 m → Mover diretório\
+d → Deletar diretório\
 k → Copiar ou recortar arquivos
 
 ------------------------------------------------------------------------
@@ -199,6 +202,128 @@ M -folder k x C:\Entrada C:\Destino
 
 ------------------------------------------------------------------------
 
+## 3.5 Deletar Pasta
+
+``` bash
+M -folder d <path>
+```
+
+Exemplo:
+
+``` bash
+M -folder d C:\Temp\NovaPasta
+```
+
+Regras:
+
+-   O diretório deve existir
+-   A exclusão é recursiva (remove subpastas e arquivos)
+------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------
+
+## 4. Operações com Arquivos (-file)
+
+Subcomandos disponíveis:
+
+c → Criar arquivo\
+m → Mover arquivo\
+d → Deletar arquivo\
+k → Copiar ou recortar arquivo
+
+------------------------------------------------------------------------
+
+## 4.1 Criar Arquivo
+
+``` bash
+M -file c <diretorio> <nome_arquivo>
+```
+
+Exemplo:
+
+``` bash
+M -file c C:\Temp relatorio.txt
+```
+
+Regras:
+
+-   Diretório deve existir
+-   Nome do arquivo não pode conter caracteres inválidos
+
+------------------------------------------------------------------------
+
+## 4.2 Mover Arquivo
+
+``` bash
+M -file m <arquivo_origem> <diretorio_destino>
+```
+
+Exemplo:
+
+``` bash
+M -file m C:\Temp\relatorio.txt C:\Destino
+```
+
+Regras:
+
+-   Arquivo de origem e diretório de destino devem existir
+-   Não substitui arquivo existente no destino
+
+------------------------------------------------------------------------
+
+## 4.3 Copiar Arquivo
+
+``` bash
+M -file k <arquivo_origem> <diretorio_destino>
+```
+
+Exemplo:
+
+``` bash
+M -file k C:\Entrada\foto.png C:\Backup
+```
+
+-   Copia o arquivo para o diretório de destino
+-   Sobrescreve se já existir
+
+------------------------------------------------------------------------
+
+## 4.4 Recortar Arquivo
+
+``` bash
+M -file k x <arquivo_origem> <diretorio_destino>
+```
+
+Exemplo:
+
+``` bash
+M -file k x C:\Entrada\foto.png C:\Destino
+```
+
+-   Move o arquivo para o destino
+-   Sobrescreve se já existir
+
+------------------------------------------------------------------------
+
+## 4.5 Deletar Arquivo
+
+``` bash
+M -file d <arquivo>
+```
+
+Exemplo:
+
+``` bash
+M -file d C:\Temp\relatorio.txt
+```
+
+Regras:
+
+-   O arquivo deve existir
+
+------------------------------------------------------------------------
+
 # Códigos de Saída
 
   Código   Significado
@@ -213,7 +338,7 @@ M -folder k x C:\Entrada C:\Destino
 
 -   Operações são síncronas e bloqueantes
 -   Não há suporte a subdiretórios
--   Merge gera nome fixo: pdfMerge.pdf
+-   Merge usa nome padrão pdfMerge.pdf quando nome de saída não é informado
 
 ------------------------------------------------------------------------
 
