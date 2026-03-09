@@ -342,6 +342,40 @@ Regras:
 
 ------------------------------------------------------------------------
 
+
+------------------------------------------------------------------------
+
+# Testes
+
+Projeto de testes automatizados:
+
+-   `M.Tests` (xUnit)
+
+Execução local:
+
+``` bash
+dotnet restore M.slnx --configfile NuGet.Config
+dotnet test M.Tests/M.Tests.csproj -c Release
+```
+
+------------------------------------------------------------------------
+
+# CI/CD (GitHub Actions)
+
+Workflow:
+
+-   `.github/workflows/ci.yml`
+
+Gatilhos:
+
+-   Push em qualquer branch
+-   Pull Request
+
+Pipeline executa:
+
+1. `dotnet restore`
+2. `dotnet build` (Release)
+3. `dotnet test` (Release)
 # Licença
 
 Definir conforme necessidade do projeto (MIT, Proprietária, etc).
