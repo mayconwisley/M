@@ -87,4 +87,30 @@ public class Pasta
             throw;
         }
     }
+
+    public static bool DeletarSubPasta(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return false;
+
+        try
+        {
+            var foders = Directory.GetDirectories(path);
+
+            foreach (var item in foders)
+            {
+                Directory.Delete(item, true);
+            }
+
+            return true;
+        }
+        catch (UnauthorizedAccessException uaEx)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
 }

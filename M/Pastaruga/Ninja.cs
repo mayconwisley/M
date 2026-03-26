@@ -38,6 +38,13 @@ public sealed class Ninja
                     }
                     Pasta.Deletar(args[2]);
                     break;
+                case "ds":
+                    if (args.Length < 3)
+                    {
+                        Environment.Exit(2);
+                    }
+                    Pasta.DeletarSubPasta(args[2]);
+                    break;
 
                 case "k":
                     if (args.Length < 4)
