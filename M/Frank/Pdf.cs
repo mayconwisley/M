@@ -43,8 +43,8 @@ public static class Pdf
                     using var image = XImage.FromFile(file);
 
                     var page = outputDocument.AddPage();
-                    page.Width = image.PointWidth;
-                    page.Height = image.PointHeight;
+                    page.Width = XUnit.FromPoint(image.PointWidth);
+                    page.Height = XUnit.FromPoint(image.PointHeight);
 
                     using var gfx = XGraphics.FromPdfPage(page);
                     gfx.DrawImage(image, 0, 0);

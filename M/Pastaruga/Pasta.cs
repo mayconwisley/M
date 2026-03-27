@@ -6,13 +6,13 @@ public class Pasta
     {
         if (string.IsNullOrEmpty(path))
             return false;
-        if (string.IsNullOrEmpty(nameDirectory))
+        if (string.IsNullOrWhiteSpace(nameDirectory))
             return false;
 
-        // Validar nome de diretório em busca de caracteres inválidos
-        foreach (var c in Path.GetInvalidFileNameChars())
-            if (nameDirectory.Contains(c.ToString()))
-                return false;
+        if (nameDirectory.Contains('"'))
+            return false;
+        if (nameDirectory.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            return false;
 
         try
         {
@@ -26,11 +26,11 @@ public class Pasta
             Directory.CreateDirectory(newDirectory);
             return true;
         }
-        catch (UnauthorizedAccessException uaEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -55,11 +55,11 @@ public class Pasta
             Directory.Move(pathOrigin, pathFinalDestination);
             return true;
         }
-        catch (UnauthorizedAccessException auEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -78,11 +78,11 @@ public class Pasta
             Directory.Delete(path, true);
             return true;
         }
-        catch (UnauthorizedAccessException uaEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -98,17 +98,15 @@ public class Pasta
             var foders = Directory.GetDirectories(path);
 
             foreach (var item in foders)
-            {
                 Directory.Delete(item, true);
-            }
 
             return true;
         }
-        catch (UnauthorizedAccessException uaEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

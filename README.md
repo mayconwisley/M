@@ -161,6 +161,7 @@ M -folder c C:\Temp NovaPasta
 Regras:
 
 -   Caminho deve existir
+-   Nome não pode ser vazio ou conter apenas espaços
 -   Nome não pode conter caracteres inválidos
 
 ---
@@ -284,6 +285,7 @@ M -file c C:\Temp relatorio.txt
 Regras:
 
 -   Diretório deve existir
+-   Nome do arquivo não pode ser vazio ou conter apenas espaços
 -   Nome do arquivo não pode conter caracteres inválidos
 
 ---

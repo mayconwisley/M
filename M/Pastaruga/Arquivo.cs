@@ -25,11 +25,11 @@ public sealed class Arquivo
             }
             return true;
         }
-        catch (UnauthorizedAccessException auEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -42,9 +42,10 @@ public sealed class Arquivo
         if (string.IsNullOrWhiteSpace(fileName))
             return false;
 
-        foreach (var c in Path.GetInvalidFileNameChars())
-            if (fileName.Contains(c.ToString()))
-                return false;
+        if (fileName.Contains("\""))
+            return false;
+        if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            return false;
 
         try
         {
@@ -58,11 +59,11 @@ public sealed class Arquivo
             using var stream = File.Create(filePath);
             return true;
         }
-        catch (UnauthorizedAccessException auEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -87,11 +88,11 @@ public sealed class Arquivo
             File.Move(filePath, destinationFile);
             return true;
         }
-        catch (UnauthorizedAccessException auEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -110,11 +111,11 @@ public sealed class Arquivo
             File.Delete(filePath);
             return true;
         }
-        catch (UnauthorizedAccessException auEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -141,11 +142,11 @@ public sealed class Arquivo
 
             return true;
         }
-        catch (UnauthorizedAccessException auEx)
+        catch (UnauthorizedAccessException)
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
