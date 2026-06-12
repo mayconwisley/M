@@ -1,6 +1,10 @@
-# M — File Toolkit
+<p align="center">
+  <img src="M/Resources/logo.png" width="120" alt="M — File Toolkit logo"/>
+</p>
 
-CLI em .NET para automação de operações com arquivos, pastas e PDFs.
+<h1 align="center">M — File Toolkit</h1>
+
+<p align="center">CLI em .NET para automação de operações com arquivos, pastas e PDFs.</p>
 
 ---
 
