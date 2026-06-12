@@ -1,63 +1,83 @@
-using M.Frank;
-using M.Pastaruga;
-using M.TimeoutLsp;
+using M.Application.File;
+using M.Application.Folder;
+using M.Application.Pdf;
+using M.Application.Timeout;
+using M.Infrastructure.File;
+using M.Infrastructure.Folder;
+using M.Infrastructure.Pdf;
+using M.Presentation;
+using M.Presentation.Cli;
 
 namespace M;
 
-internal class Program
+internal static class Program
 {
-    private static void PrintUsage()
+    static int Main(string[] args)
     {
-        Console.WriteLine("Uso:");
-        Console.WriteLine("M -merge <input_directory> <output_directory> [output_filename]");
-        Console.WriteLine("M -timeout <time>");
-        Console.WriteLine("M -folder c|m|d|k [x] <path> [pathDestination]");
-        Console.WriteLine("M -file c|m|d|k [x] <path> [pathDestination]");
+        ConsoleUi.PrintHeader();
+
+        if (args.Length < 1 || args[0] is "-h" or "--help" or "help")
+        {
+            ConsoleUi.PrintHelp();
+            return 0;
+        }
+
+        var handlers = BuildHandlers();
+
+        try
+        {
+            if (!handlers.TryGetValue(args[0], out var handler))
+            {
+                ConsoleUi.Error($"Comando desconhecido: '{args[0]}'");
+                ConsoleUi.PrintHelp();
+                return 2;
+            }
+
+            handler(args);
+            ConsoleUi.Success("Processo concluído com sucesso.");
+            return 0;
+        }
+        catch (ArgumentException ex)
+        {
+            ConsoleUi.Error(ex.Message);
+            return 2;
+        }
+        catch (Exception ex)
+        {
+            ConsoleUi.Error(ex.Message);
+            return 1;
+        }
     }
 
-    static void Main(string[] args)
+    private static Dictionary<string, Action<string[]>> BuildHandlers()
     {
-        if (args.Length < 1)
+        var folderRepo = new FolderRepository();
+        var fileRepo   = new FileRepository();
+        var pdfMerger  = new PdfMerger();
+
+        var folderHandler = new FolderCliHandler(
+            new CreateFolderUseCase(folderRepo),
+            new MoveFolderUseCase(folderRepo),
+            new DeleteFolderUseCase(folderRepo),
+            new DeleteSubFoldersUseCase(folderRepo),
+            new DeleteFolderFilesUseCase(folderRepo),
+            new CopyFolderFilesUseCase(folderRepo));
+
+        var fileHandler   = new FileCliHandler(
+            new CreateFileUseCase(fileRepo),
+            new MoveFileUseCase(fileRepo),
+            new DeleteFileUseCase(fileRepo),
+            new CopyFileUseCase(fileRepo));
+
+        var pdfHandler     = new PdfCliHandler(new MergePdfUseCase(pdfMerger));
+        var timeoutHandler = new TimeoutCliHandler(new TimeoutUseCase());
+
+        return new Dictionary<string, Action<string[]>>
         {
-            PrintUsage();
-            return;
-        }
-
-        string command = args[0];
-
-        switch (command)
-        {
-            case "-timeout":
-                if (args.Length != 2 || !int.TryParse(args[1], out _))
-                {
-                    PrintUsage();
-                    Console.WriteLine("M -timeout <time>\n");
-                    throw new ArgumentException("Para o timeout precisa existir todos parametros e time precisa ser um numero");
-                }
-
-                TimeOutLsp.Execute(args);
-                break;
-            case "-merge":
-                if (args.Length < 3 || args.Length > 4)
-                {
-                    PrintUsage();
-                    Console.WriteLine("M -merge <input_directory> <output_directory> [output_filename]\n");
-                    throw new ArgumentException("Para o merge é necessário informar os diretórios de entrada e saída");
-                }
-
-                Pdf.Execute(args);
-                break;
-            case "-folder":
-                Ninja.Execute(args);
-                break;
-            case "-file":
-                ArquivoNinja.Execute(args);
-                break;
-            default:
-                PrintUsage();
-                break;
-        }
-
-        Console.WriteLine("Processo concluído com sucesso.");
+            ["-folder"]  = folderHandler.Handle,
+            ["-file"]    = fileHandler.Handle,
+            ["-merge"]   = pdfHandler.Handle,
+            ["-timeout"] = timeoutHandler.Handle,
+        };
     }
 }

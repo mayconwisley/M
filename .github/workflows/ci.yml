@@ -25,4 +25,16 @@ jobs:
         run: dotnet build M.slnx --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test M.Tests/M.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+        run: >
+          dotnet test M.Tests/M.Tests.csproj
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ./test-results
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./test-results/test-results.trx

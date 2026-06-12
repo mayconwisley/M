@@ -1,419 +1,150 @@
-# M - Utilitário de Linha de Comando (.NET)
+# M — File Toolkit
 
-Ferramenta CLI desenvolvida em .NET para automação de tarefas
-relacionadas a:
-
--   Controle de tempo (timeout)
--   Mesclagem de PDFs e imagens
--   Operações com diretórios
--   Cópia e movimentação de arquivos
+CLI em .NET para automação de operações com arquivos, pastas e PDFs.
 
 ---
 
-# Requisitos
+## Requisitos
 
--   .NET 8+ (ou versão compatível com o projeto)
--   Pacote NuGet:
-    -   PdfSharp
-
-Instalação do pacote:
-
-``` bash
-dotnet add package PdfSharp
-```
+- .NET 10
+- Pacote NuGet: [PDFsharp](https://www.nuget.org/packages/PDFsharp)
 
 ---
 
-# Compilação
+## Compilação e publicação
 
-``` bash
+```bash
+# Build
 dotnet build -c Release
-```
 
-Publicação:
-
-``` bash
+# Publicar executável self-contained para Windows x64
 dotnet publish -c Release -r win-x64 --self-contained true
 ```
 
 ---
 
-# Estrutura de Comandos
+## Estrutura do projeto
 
-    M -timeout <tempo_em_segundos>
-    M -merge <diretorio_entrada> <diretorio_saida> [nome_arquivo_saida]
-    M -folder <opcao> [parametros]
-    M -file <opcao> [parametros]
-
----
-
-# Exemplos Rápidos
-
-``` bash
-M -timeout 5
-M -merge C:\Docs\Entrada C:\Docs\Saida relatorio_final
-M -folder c C:\Temp NovaPasta
-M -folder ds C:\Temp\NovaPasta
-M -folder d C:\Temp\NovaPasta
-M -file k C:\Entrada\foto.png C:\Backup
-M -file d C:\Temp\relatorio.txt
+```
+M/
+├── Domain/            # Interfaces — sem dependências externas
+├── Application/       # Use cases — regras de negócio e validação
+├── Infrastructure/    # Implementações de I/O (arquivo, PDF)
+├── Presentation/      # CLI handlers e ConsoleUi
+└── Program.cs         # Composition root
 ```
 
 ---
 
-# 1. Timeout
+## Comandos
 
-Executa uma pausa bloqueante utilizando:
-
-``` csharp
-Thread.Sleep(timeout * 1000);
+```
+M -timeout <seconds>
+M -merge   <input_dir> <output_dir> [filename]
+M -folder  <cmd> [args...]
+M -file    <cmd> [args...]
+M --help
 ```
 
-## Sintaxe
+---
 
-``` bash
-M -timeout <tempo>
-```
+## -timeout
 
-## Exemplo
+Pausa bloqueante por N segundos.
 
-``` bash
+```bash
 M -timeout 10
 ```
 
-Aguarda 10 segundos antes de finalizar o processo.
-
-Validações:
-
--   Deve conter exatamente 2 argumentos
--   O tempo deve ser número inteiro
-
 ---
 
-# 2. Merge de PDFs e Imagens
+## -merge
 
-Mescla arquivos localizados em um diretório em um único PDF.
+Mescla PDFs e imagens em um único arquivo PDF, processados em ordem alfabética.
 
-Extensões suportadas:
+**Extensões suportadas:** `.pdf` `.jpg` `.jpeg` `.png` `.bmp`
 
--   .pdf
--   .jpg
--   .jpeg
--   .png
--   .bmp
-
-Arquivos são processados em ordem alfabética.
-
-## Sintaxe
-
-``` bash
-M -merge <diretorio_entrada> <diretorio_saida> [nome_arquivo_saida]
-```
-
-## Exemplo
-
-``` bash
+```bash
 M -merge C:\Docs\Entrada C:\Docs\Saida
 M -merge C:\Docs\Entrada C:\Docs\Saida relatorio_final
 ```
 
-Resultado:
-
-    C:\Docs\Saida\pdfMerge.pdf
-
-Comportamento técnico:
-
--   PDFs são importados via PdfReader.Open(..., Import)
--   Imagens são convertidas em páginas PDF
--   Operação ocorre apenas no diretório raiz (sem subpastas)
-
-Erros possíveis:
-
--   DirectoryNotFoundException
--   InvalidOperationException
+Quando o nome de saída é omitido, o arquivo gerado se chama `pdfMerge.pdf`.
 
 ---
 
-## 3. Operações com Pastas (-folder)
+## -folder
 
-Subcomandos disponíveis:
+Operações sobre diretórios.
 
--   `c` → Criar diretório
--   `m` → Mover diretório
--   `d` → Deletar diretório
--   `k` → Copiar ou recortar arquivos
--   `ds` → Deletar subpastas
+| Subcomando | Sintaxe | Descrição |
+|---|---|---|
+| `c` | `-folder c <path> <name>` | Criar subpasta |
+| `m` | `-folder m <src> <dst>` | Mover pasta |
+| `d` | `-folder d <path>` | Deletar pasta (recursivo) |
+| `ds` | `-folder ds <path>` | Deletar subpastas |
+| `da` | `-folder da <path>` | Deletar arquivos da pasta |
+| `k` | `-folder k <src> <dst>` | Copiar arquivos da pasta |
+| `k x` | `-folder k x <src> <dst>` | Recortar arquivos da pasta |
 
----
-
-## 3.1 Criar Pasta
-
-``` bash
-M -folder c <path> <nome_da_pasta>
-```
-
-Exemplo:
-
-``` bash
-M -folder c C:\Temp NovaPasta
-```
-
-Regras:
-
--   Caminho deve existir
--   Nome não pode ser vazio ou conter apenas espaços
--   Nome não pode conter caracteres inválidos
-
----
-
-## 3.2 Mover Pasta
-
-``` bash
-M -folder m <origem> <destino>
-```
-
-Exemplo:
-
-``` bash
-M -folder m C:\Temp\NovaPasta C:\Destino
-```
-
-Regras:
-
--   Origem e destino devem existir
--   Destino final não pode existir previamente
-
----
-
-## 3.3 Copiar Arquivos
-
-``` bash
-M -folder k <origem> <destino>
-```
-
-Exemplo:
-
-``` bash
-M -folder k C:\Entrada C:\Backup
-```
-
--   Copia todos arquivos do diretório origem
--   Sobrescreve se já existir
--   Não copia subpastas
-
----
-
-## 3.4 Recortar (Mover Arquivos)
-
-``` bash
-M -folder k x <origem> <destino>
-```
-
-Exemplo:
-
-``` bash
+```bash
+M -folder c  C:\Temp NovaPasta
+M -folder m  C:\Temp\NovaPasta C:\Destino
+M -folder d  C:\Temp\NovaPasta
+M -folder ds C:\Temp\NovaPasta
+M -folder da C:\Temp\NovaPasta
+M -folder k  C:\Entrada C:\Backup
 M -folder k x C:\Entrada C:\Destino
 ```
 
--   Move arquivos usando File.Move
--   Remove da origem
-
 ---
 
-## 3.5 Deletar Pasta
+## -file
 
-``` bash
-M -folder d <path>
-```
+Operações sobre arquivos individuais.
 
-Exemplo:
+| Subcomando | Sintaxe | Descrição |
+|---|---|---|
+| `c` | `-file c <dir> <name>` | Criar arquivo |
+| `m` | `-file m <file> <dst>` | Mover arquivo |
+| `d` | `-file d <file>` | Deletar arquivo |
+| `k` | `-file k <file> <dst>` | Copiar arquivo |
+| `k x` | `-file k x <file> <dst>` | Recortar arquivo |
 
-``` bash
-M -folder d C:\Temp\NovaPasta
-```
-
-Regras:
-
--   O diretório deve existir
--   A exclusão é recursiva (remove subpastas e arquivos)
----
-
-## 3.6 Deletar Subpastas
-
-Remove todas as subpastas de um diretório, mantendo os arquivos na raiz.
-
-``` bash
-M -folder ds <path>
-```
-
-Exemplo:
-
-``` bash
-M -folder ds C:\Temp\NovaPasta
-```
-
-Regras:
-
--   O diretório deve existir
--   Remove apenas subpastas (recursivo)
--   Arquivos na raiz são preservados
----
-
-## 4. Operações com Arquivos (-file)
-
-Subcomandos disponíveis:
-
--   `c` → Criar arquivo
--   `m` → Mover arquivo
--   `d` → Deletar arquivo
--   `k` → Copiar ou recortar arquivo
-
----
-
-## 4.1 Criar Arquivo
-
-``` bash
-M -file c <diretorio> <nome_arquivo>
-```
-
-Exemplo:
-
-``` bash
-M -file c C:\Temp relatorio.txt
-```
-
-Regras:
-
--   Diretório deve existir
--   Nome do arquivo não pode ser vazio ou conter apenas espaços
--   Nome do arquivo não pode conter caracteres inválidos
-
----
-
-## 4.2 Mover Arquivo
-
-``` bash
-M -file m <arquivo_origem> <diretorio_destino>
-```
-
-Exemplo:
-
-``` bash
-M -file m C:\Temp\relatorio.txt C:\Destino
-```
-
-Regras:
-
--   Arquivo de origem e diretório de destino devem existir
--   Não substitui arquivo existente no destino
-
----
-
-## 4.3 Copiar Arquivo
-
-``` bash
-M -file k <arquivo_origem> <diretorio_destino>
-```
-
-Exemplo:
-
-``` bash
-M -file k C:\Entrada\foto.png C:\Backup
-```
-
--   Copia o arquivo para o diretório de destino
--   Sobrescreve se já existir
-
----
-
-## 4.4 Recortar Arquivo
-
-``` bash
-M -file k x <arquivo_origem> <diretorio_destino>
-```
-
-Exemplo:
-
-``` bash
+```bash
+M -file c   C:\Temp relatorio.txt
+M -file m   C:\Temp\relatorio.txt C:\Destino
+M -file d   C:\Temp\relatorio.txt
+M -file k   C:\Entrada\foto.png C:\Backup
 M -file k x C:\Entrada\foto.png C:\Destino
 ```
 
--   Move o arquivo para o destino
--   Sobrescreve se já existir
-
 ---
 
-## 4.5 Deletar Arquivo
-
-``` bash
-M -file d <arquivo>
-```
-
-Exemplo:
-
-``` bash
-M -file d C:\Temp\relatorio.txt
-```
-
-Regras:
-
--   O arquivo deve existir
-
----
-
-# Códigos de Saída
+## Códigos de saída
 
 | Código | Significado |
-| --- | --- |
-| 0 | Execução concluída |
-| 1 | Erro interno |
-| 2 | Argumentos inválidos |
+|---|---|
+| `0` | Sucesso |
+| `1` | Erro de execução |
+| `2` | Argumentos inválidos |
 
 ---
 
-# Observações Técnicas
+## Testes
 
--   Operações são síncronas e bloqueantes
--   Merge ocorre apenas no diretório raiz (sem subpastas)
--   Cópia de arquivos via `-folder k` não inclui subpastas
--   Merge usa nome padrão pdfMerge.pdf quando nome de saída não é informado
-
----
-
-# Testes
-
-Projeto de testes automatizados:
-
--   `M.Tests` (xUnit)
-
-Execução local:
-
-``` bash
-dotnet restore M.slnx --configfile NuGet.Config
-dotnet test M.Tests\M.Tests.csproj -c Release
+```bash
+dotnet test
 ```
 
----
-
-# CI/CD (GitHub Actions)
-
-Workflow:
-
--   `.github\workflows\ci.yml`
-
-Gatilhos:
-
--   Push em qualquer branch
--   Pull Request
-
-Pipeline executa:
-
-1. `dotnet restore`
-2. `dotnet build` (Release)
-3. `dotnet test` (Release)
+Projeto: `M.Tests` (xUnit). Os testes cobrem os repositórios de infraestrutura com diretórios temporários reais.
 
 ---
 
-# Licença
+## CI
 
-Definir conforme necessidade do projeto (MIT, Proprietária, etc).
+Pipeline em `.github/workflows/ci.yml` — executa em todo push e pull request:
+
+1. Restore
+2. Build (Release)
+3. Test (Release) + publicação de resultados como artefato
