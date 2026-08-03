@@ -89,7 +89,7 @@ Operações sobre diretórios.
 | `ds` | `-folder ds <path>` | Deletar subpastas |
 | `da` | `-folder da <path>` | Deletar arquivos da pasta |
 | `k` | `-folder k <src> <dst>` | Copiar arquivos da pasta |
-| `k x` | `-folder k x <src> <dst>` | Recortar arquivos da pasta |
+| `kx` | `-folder k x <src> <dst>` | Recortar arquivos da pasta |
 
 ```bash
 M -folder c  C:\Temp NovaPasta
@@ -98,7 +98,7 @@ M -folder d  C:\Temp\NovaPasta
 M -folder ds C:\Temp\NovaPasta
 M -folder da C:\Temp\NovaPasta
 M -folder k  C:\Entrada C:\Backup
-M -folder k x C:\Entrada C:\Destino
+M -folder kx C:\Entrada C:\Destino
 ```
 
 ---
@@ -113,14 +113,14 @@ Operações sobre arquivos individuais.
 | `m` | `-file m <file> <dst>` | Mover arquivo |
 | `d` | `-file d <file>` | Deletar arquivo |
 | `k` | `-file k <file> <dst>` | Copiar arquivo |
-| `k x` | `-file k x <file> <dst>` | Recortar arquivo |
+| `kx` | `-file k x <file> <dst>` | Recortar arquivo |
 
 ```bash
 M -file c   C:\Temp relatorio.txt
 M -file m   C:\Temp\relatorio.txt C:\Destino
 M -file d   C:\Temp\relatorio.txt
 M -file k   C:\Entrada\foto.png C:\Backup
-M -file k x C:\Entrada\foto.png C:\Destino
+M -file kx C:\Entrada\foto.png C:\Destino
 ```
 
 ---

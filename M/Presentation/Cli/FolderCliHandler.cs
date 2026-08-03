@@ -3,12 +3,12 @@ using M.Application.Folder;
 namespace M.Presentation.Cli;
 
 public sealed class FolderCliHandler(
-    CreateFolderUseCase      create,
-    MoveFolderUseCase        move,
-    DeleteFolderUseCase      delete,
-    DeleteSubFoldersUseCase  deleteSubFolders,
+    CreateFolderUseCase create,
+    MoveFolderUseCase move,
+    DeleteFolderUseCase delete,
+    DeleteSubFoldersUseCase deleteSubFolders,
     DeleteFolderFilesUseCase deleteFolderFiles,
-    CopyFolderFilesUseCase   copyFiles)
+    CopyFolderFilesUseCase copyFiles)
 {
     public void Handle(string[] args)
     {
@@ -45,16 +45,12 @@ public sealed class FolderCliHandler(
                 break;
 
             case "k":
-                RequireArgs(args, 4, "M -folder k [x] <src> <dst>");
-                if (args[2] == "x")
-                {
-                    RequireArgs(args, 5, "M -folder k x <src> <dst>");
-                    copyFiles.Execute(args[3], args[4], cut: true);
-                }
-                else
-                {
-                    copyFiles.Execute(args[2], args[3]);
-                }
+                RequireArgs(args, 4, "M -folder k <src> <dst>");
+                copyFiles.Execute(args[2], args[3]);
+                break;
+            case "kx":
+                RequireArgs(args, 4, "M -folder kx <src> <dst>");
+                copyFiles.Execute(args[2], args[3], cut: true);
                 break;
 
             default:

@@ -4,9 +4,9 @@ namespace M.Presentation.Cli;
 
 public sealed class FileCliHandler(
     CreateFileUseCase create,
-    MoveFileUseCase   move,
+    MoveFileUseCase move,
     DeleteFileUseCase delete,
-    CopyFileUseCase   copy)
+    CopyFileUseCase copy)
 {
     public void Handle(string[] args)
     {
@@ -33,18 +33,13 @@ public sealed class FileCliHandler(
                 break;
 
             case "k":
-                RequireArgs(args, 4, "M -file k [x] <file> <dst>");
-                if (args[2] == "x")
-                {
-                    RequireArgs(args, 5, "M -file k x <file> <dst>");
-                    copy.Execute(args[3], args[4], cut: true);
-                }
-                else
-                {
-                    copy.Execute(args[2], args[3]);
-                }
+                RequireArgs(args, 4, "M -file k <file> <dst>");
+                copy.Execute(args[2], args[3]);
                 break;
-
+            case "kx":
+                RequireArgs(args, 4, "M -file kx <file> <dst>");
+                copy.Execute(args[2], args[3], cut: true);
+                break;
             default:
                 throw new ArgumentException($"Subcomando desconhecido para -file: '{cmd}'");
         }

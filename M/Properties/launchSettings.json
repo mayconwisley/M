@@ -2,7 +2,7 @@
   "profiles": {
     "M": {
       "commandName": "Project",
-      "commandLineArgs": "-timeout 1"
+      "commandLineArgs": "-file kx \"C:\\Temp\\M\\Origem\\QrCode Clinica Sim.PDF\" \"C:\\Temp\\M\\Destino\""
     }
   }
 }

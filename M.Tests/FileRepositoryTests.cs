@@ -45,7 +45,7 @@ public sealed class FileRepositoryTests : IDisposable
     public void Move_ShouldMoveFileToDestinationDirectory()
     {
         var origin = Path.Combine(_root, "origem.txt");
-        var dest   = Path.Combine(_root, "destino");
+        var dest = Path.Combine(_root, "destino");
 
         File.WriteAllText(origin, "conteudo");
         Directory.CreateDirectory(dest);
@@ -59,7 +59,7 @@ public sealed class FileRepositoryTests : IDisposable
     public void Move_ShouldReturnFalse_WhenOriginOrDestinationDoesNotExist()
     {
         var origin = Path.Combine(_root, "origem.txt");
-        var dest   = Path.Combine(_root, "destino");
+        var dest = Path.Combine(_root, "destino");
 
         Directory.CreateDirectory(dest);
         Assert.False(_sut.Move(origin, dest));
@@ -73,11 +73,11 @@ public sealed class FileRepositoryTests : IDisposable
     public void Move_ShouldReturnFalse_WhenDestinationFileAlreadyExists()
     {
         var origin = Path.Combine(_root, "origem.txt");
-        var dest   = Path.Combine(_root, "destino");
+        var dest = Path.Combine(_root, "destino");
 
         File.WriteAllText(origin, "conteudo");
         Directory.CreateDirectory(dest);
-        File.WriteAllText(Path.Combine(dest, "origem.txt"), "x");
+        File.WriteAllText(Path.Combine(dest, "origem.txt"), "kx");
 
         Assert.False(_sut.Move(origin, dest));
         Assert.True(File.Exists(origin));
@@ -107,7 +107,7 @@ public sealed class FileRepositoryTests : IDisposable
     public void Copy_ShouldCopyFile()
     {
         var origin = Path.Combine(_root, "origem.txt");
-        var dest   = Path.Combine(_root, "destino");
+        var dest = Path.Combine(_root, "destino");
 
         File.WriteAllText(origin, "conteudo");
         Directory.CreateDirectory(dest);
@@ -121,7 +121,7 @@ public sealed class FileRepositoryTests : IDisposable
     public void Copy_ShouldOverwriteDestinationWhenExists()
     {
         var origin = Path.Combine(_root, "origem.txt");
-        var dest   = Path.Combine(_root, "destino");
+        var dest = Path.Combine(_root, "destino");
 
         File.WriteAllText(origin, "novo");
         Directory.CreateDirectory(dest);
@@ -135,7 +135,7 @@ public sealed class FileRepositoryTests : IDisposable
     public void Copy_WithCut_ShouldMoveFile()
     {
         var origin = Path.Combine(_root, "origem.txt");
-        var dest   = Path.Combine(_root, "destino");
+        var dest = Path.Combine(_root, "destino");
 
         File.WriteAllText(origin, "conteudo");
         Directory.CreateDirectory(dest);
@@ -149,7 +149,7 @@ public sealed class FileRepositoryTests : IDisposable
     public void Copy_ShouldReturnFalse_WhenOriginOrDestinationDoesNotExist()
     {
         var origin = Path.Combine(_root, "origem.txt");
-        var dest   = Path.Combine(_root, "destino");
+        var dest = Path.Combine(_root, "destino");
 
         Directory.CreateDirectory(dest);
         Assert.False(_sut.Copy(origin, dest));
